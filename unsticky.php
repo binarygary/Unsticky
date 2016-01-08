@@ -12,6 +12,9 @@
  */
 
 
+//wp_schedule_single_event( time() + 3600, 'my_new_event', array( $arg1, $arg2, $arg3 ) );
+
+
 add_action( 'post_submitbox_misc_actions', 'unsticky' );
 
 function unsticky() {
@@ -24,19 +27,14 @@ function unsticky() {
         	$unstickyTime = get_post_meta( $post->ID, '_unsticky_time', true );
         }
 		
-		echo "<label class=\"selectit\"><input id=\"in-popular-category-1\" type=\"checkbox\" ";
-		
-		//checked="checked" 
-		echo "value=\"1\"  /> Unsticky Date </label>";
-		
-		//if unstickyTime is set display in the same format as the satandard time setting
-		
 		?>
-		<span class="screen-reader-text">Edit date and time</span></a>
+		<h4>Schedule When to Unsticky:</h4>
+		<span class="screen-reader-text">Scheduled Unsticky Date and Time</span></a>
 					<fieldset id="timestampdiv">
-					<legend class="screen-reader-text">Date and time</legend>
-					<div class="timestamp-wrap"><label><span class="screen-reader-text">Month</span><select id="mm" name="mm">
-					<option value="01" data-text="Jan"  selected='selected'>01-Jan</option>
+					<legend class="screen-reader-text">Scheduled Unsticky Date and Time</legend>
+					<div class="timestamp-wrap"><label><span class="screen-reader-text">Month</span>
+					<select id="mm" name="mm">
+					<option value="01" data-text="Jan" >01-Jan</option>
 					<option value="02" data-text="Feb" >02-Feb</option>
 					<option value="03" data-text="Mar" >03-Mar</option>
 					<option value="04" data-text="Apr" >04-Apr</option>
@@ -48,7 +46,12 @@ function unsticky() {
 					<option value="10" data-text="Oct" >10-Oct</option>
 					<option value="11" data-text="Nov" >11-Nov</option>
 					<option value="12" data-text="Dec" >12-Dec</option>
-		</select></label> <label><span class="screen-reader-text">Day</span><input type="text" id="jj" name="jj" value="08" size="2" maxlength="2" autocomplete="off" /></label>, <label><span class="screen-reader-text">Year</span><input type="text" id="aa" name="aa" value="2016" size="4" maxlength="4" autocomplete="off" /></label> @ <label><span class="screen-reader-text">Hour</span><input type="text" id="hh" name="hh" value="02" size="2" maxlength="2" autocomplete="off" /></label>:<label><span class="screen-reader-text">Minute</span><input type="text" id="mn" name="mn" value="07" size="2" maxlength="2" autocomplete="off" /></label></div><input type="hidden" id="ss" name="ss" value="22" />
+					</select></label> <label><span class="screen-reader-text">Day</span>
+						<input type="text" id="jj" name="jj" value="08" size="2" maxlength="2" autocomplete="off" /></label>, <label><span class="screen-reader-text">Year</span>
+							<input type="text" id="aa" name="aa" value="2016" size="4" maxlength="4" autocomplete="off" /></label> @ <label><span class="screen-reader-text">Hour</span>
+								<input type="text" id="hh" name="hh" value="02" size="2" maxlength="2" autocomplete="off" /></label>:<label><span class="screen-reader-text">Minute</span>
+									<input type="text" id="mn" name="mn" value="07" size="2" maxlength="2" autocomplete="off" /></label></div>
+									<input type="hidden" id="ss" name="ss" value="22" />
 		<?php
 		//if it's not set then display standard format
 		
@@ -75,6 +78,7 @@ function save_unsticky( $post_id ) {
     if (!isset($_POST['']))
         return $post_id;
     else {
+		print_r($_POST);
         $mydata = $_POST['article_or_box'];
         update_post_meta( $post_id, '_article_or_box', $_POST['article_or_box'], get_post_meta( $post_id, '_article_or_box', true ) );
     }

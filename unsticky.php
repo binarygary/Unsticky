@@ -14,13 +14,13 @@
 require_once( ABSPATH . "wp-includes/pluggable.php" );
 
 //this is for testing only
-unsticky_unstick();
+//unsticky_unstick();
+
+add_action( 'unsticky_unstick', 'unsticky_unstick', 10, 0 );
 
 register_activation_hook ( __FILE__, 'unsticky_scheduler' );
 function unsticky_scheduler () {
-	
 	wp_schedule_event(time(), 'hourly', 'unsticky_unstick' );
-	
 }
 
 register_deactivation_hook (__FILE__, 'unsticky_unscheduler' );
@@ -28,22 +28,22 @@ function unsticky_unscheduler() {
 	wp_clear_scheduled_hook( 'unsticky_unstick' );
 }
 
+
+//SOMETHING ISN'T WORKING ON THE GET_POSTS PORTION...
 function unsticky_unstick() {
 	$args = array(
 	   'post__in' => get_option('sticky_posts')
    	);
-	$my_query = new WP_Query($args);
-	//print_r($my_query);
-	while ($my_query->have_posts()) {
-		//the_post();
-		//echo the_ID();
-		//print_r($my_query->posts);
-		//print_r($myquery);
+	$stickyQuery = get_posts($args);
+	error_log( $stickyQuery );
+	
+	foreach ($stickyQuery as $id) {
+		$timeToUnstick=get_post_meta($id,'_unsticky_time',true);
+		error_log(print_r($timeToUnstick));
+		if ($timeToUnstick<time()){
+			unstick_post($id);
+		}
 	}
-	//Pull the meta
-	//if unstick is set and age is <time()
-
-	//unstick_post($post_id);
 }
 
 add_action( 'post_submitbox_misc_actions', 'unsticky' );
@@ -55,10 +55,18 @@ function unsticky() {
 		
         echo '<div class="misc-pub-section misc-pub-section-last" style="border-top: 1px solid #eee;">';
         $offset = get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
-		$whenToUnstick=time()+$offest;
+		if (!isset($offset)){
+			$offset=0;
+		}
+
 		if ( true == get_post_meta( $post->ID, '_unsticky_time') ) {
         	$whenToUnstick = get_post_meta( $post->ID, '_unsticky_time', true );
+			if (NULL==$whenToUnstick) {
+				$whenToUnstick=time()+31536000;
+			}
 		}
+		
+		$whenToUnstick=time()+$offset;
 		$month=date('F',$whenToUnstick);
 		$year=date('Y',$whenToUnstick);
 		$day=date('j',$whenToUnstick);
